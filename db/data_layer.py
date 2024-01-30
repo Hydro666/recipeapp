@@ -4,7 +4,7 @@ import dataclasses
 @dataclasses.dataclass
 class StructuredRecipe:
     name: str
-    recipe_ingredients: list[tuple[int, str]]
+    recipe_ingredients: set[tuple[int, str]]
 
 
 class DataAccessClient:
