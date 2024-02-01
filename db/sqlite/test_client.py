@@ -9,7 +9,7 @@ class ClientTestCase(unittest.TestCase):
         self.client = client.SQLiteClient(":memory:")
 
     def test_create_and_get_recipe_with_no_ingredients(self):
-        recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=[])
+        recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
         self.client.create_recipe(recipe)
         actual = self.client.get_recipe(recipe.name)
         self.assertEqual(recipe, actual)
