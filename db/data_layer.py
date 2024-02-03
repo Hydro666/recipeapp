@@ -1,10 +1,13 @@
 import abc
-import dataclasses
+from typing import NamedTuple
 
-@dataclasses.dataclass
-class StructuredRecipe:
+class RecipeIngredient(NamedTuple):
     name: str
-    recipe_ingredients: set[tuple[int, str]]
+    quantity: int
+
+class StructuredRecipe(NamedTuple):
+    name: str
+    recipe_ingredients: set[RecipeIngredient]
 
 
 class DataAccessClient:
