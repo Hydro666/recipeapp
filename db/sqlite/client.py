@@ -55,7 +55,7 @@ class SQLiteClient(data_layer.DataAccessClient):
 
         with self._con:
             # Check if recipe already exists.
-            if self._con.execute("SELECT * FROM recipe WHERE name == ?", (recipe.name,)).fetchone():
+            if self._con.execute("SELECT * FROM recipe WHERE name == ?", (recipe.name,)).fetchone() is not None:
                 raise SQLiteException(f"Already inserted {recipe}")
 
             # Insert the recipe.
@@ -64,12 +64,17 @@ class SQLiteClient(data_layer.DataAccessClient):
             # Insert the recipe_ingredients.
             for ingredient in recipe.recipe_ingredients:
                 self._con.execute("INSERT OR IGNORE INTO ingredient(name) VALUES(?)", (ingredient.name,))
-                ingredient_id = cur.execute("SELECT ingredient_id FROM ingredient WHERE name = ?", (ingredient[1],)).fetchone()[0]
+                ingredient_id = cur.execute("SELECT ingredient_id FROM ingredient WHERE name = ?", (ingredient.name,)).fetchone()[0]
                 cur.execute("INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)", (recipe_id, ingredient_id, ingredient.quantity))
 
 
-    def get_recipe(self, recipe_name: str) -> data_layer.StructuredRecipe:
+    def get_recipe(self, recipe_name: str) -> data_layer.StructuredRecipe | None:
         with self._con:
+            # Check if recipe already exists.
+            if self._con.execute("SELECT * FROM recipe WHERE name == ?", (recipe_name,)).fetchone() is None:
+                return None
             res = self._con.execute("SELECT tr.name, ti.name, tri.quantity FROM recipe AS tr JOIN recipe_ingredient tri USING (recipe_id) JOIN ingredient AS ti USING (ingredient_id) WHERE tr.name == ?", (recipe_name,)).fetchall()
-        print(res)
-        return data_layer.StructuredRecipe(name=res[1], recipe_ingredients=set())
+        recipe_ingredients = set()
+        for row in res:
+            recipe_ingredients.add(data_layer.RecipeIngredient(row[1], row[2]))
+        return data_layer.StructuredRecipe(name=recipe_name, recipe_ingredients=recipe_ingredients)
