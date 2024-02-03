@@ -24,6 +24,7 @@ CREATE TABLE recipe_ingredient(
     id INTEGER PRIMARY KEY,
     recipe_id INTEGER,
     ingredient_id INTEGER,
+    quantity INTEGER,
     FOREIGN KEY (recipe_id) REFERENCES recipe(recipe_id),
     FOREIGN KEY (ingredient_id) REFERENCES ingredient(ingredient_id)
 )
