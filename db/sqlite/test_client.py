@@ -84,7 +84,7 @@ class ClientTestCase(unittest.TestCase):
         with self.assertRaises(client.SQLiteException):
             self.client.update_recipe(recipe)
 
-    def test_update_recipe(self):
+    def test_update_recipe_add_ingredient(self):
         recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
         self.client.create_recipe(recipe)
         updated_recipe = data_layer.StructuredRecipe(
@@ -93,6 +93,92 @@ class ClientTestCase(unittest.TestCase):
         )
         self.client.update_recipe(updated_recipe)
         self.assertEqual(updated_recipe, self.client.get_recipe("Pascetti"))
+
+    def test_update_recipe_remove_ingredients(self):
+        recipe = data_layer.StructuredRecipe(
+            name="Pascetti",
+            recipe_ingredients={data_layer.RecipeIngredient("flour", 4)},
+        )
+        self.client.create_recipe(recipe)
+        updated_recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
+        self.client.update_recipe(updated_recipe)
+        self.assertEqual(updated_recipe, self.client.get_recipe("Pascetti"))
+
+    def test_update_recipe_update_multipe_recipe(self):
+        # Bread
+        bread_recipe = data_layer.StructuredRecipe(
+            "bread",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 10),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        # Cake
+        cake_recipe = data_layer.StructuredRecipe(
+            "cake",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 5),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("egg", 2),
+                data_layer.RecipeIngredient("sugar", 4),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        # Spaghetti
+        spaghetti_recipe = data_layer.StructuredRecipe(
+            "spaghetti",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 8),
+                data_layer.RecipeIngredient("water", 2),
+                data_layer.RecipeIngredient("egg", 5),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        self.client.create_recipe(bread_recipe)
+        self.client.create_recipe(cake_recipe)
+        self.client.create_recipe(spaghetti_recipe)
+
+        updated_bread_recipe = data_layer.StructuredRecipe(
+            "bread",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 8),
+                data_layer.RecipeIngredient("water", 2),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        updated_cake_recipe = data_layer.StructuredRecipe(
+            "cake",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 5),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("vegan_egg", 2),
+                data_layer.RecipeIngredient("salt", 1),
+                data_layer.RecipeIngredient("orange", 1),
+            },
+        )
+        updated_spaghetti_recipe = data_layer.StructuredRecipe(
+            "spaghetti",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 5),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        self.client.update_recipe(updated_bread_recipe)
+        self.assertEqual(updated_bread_recipe, self.client.get_recipe("bread"))
+        self.assertEqual(cake_recipe, self.client.get_recipe("cake"))
+        self.assertEqual(spaghetti_recipe, self.client.get_recipe("spaghetti"))
+
+        self.client.update_recipe(updated_cake_recipe)
+        self.assertEqual(updated_bread_recipe, self.client.get_recipe("bread"))
+        self.assertEqual(updated_cake_recipe, self.client.get_recipe("cake"))
+        self.assertEqual(spaghetti_recipe, self.client.get_recipe("spaghetti"))
+
+        self.client.update_recipe(updated_spaghetti_recipe)
+        self.assertEqual(updated_bread_recipe, self.client.get_recipe("bread"))
+        self.assertEqual(updated_cake_recipe, self.client.get_recipe("cake"))
+        self.assertEqual(updated_spaghetti_recipe, self.client.get_recipe("spaghetti"))
 
 
 if __name__ == "__main__":
