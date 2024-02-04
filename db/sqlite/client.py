@@ -110,3 +110,36 @@ class SQLiteClient(data_layer.DataAccessClient):
             name=recipe_name, recipe_ingredients=recipe_ingredients
         )
 
+    def update_recipe(self, recipe: data_layer.StructuredRecipe):
+        with self._con:
+            recipe_row = self._con.execute(
+                "SELECT recipe_id FROM recipe WHERE name == ?", (recipe.name,)
+            ).fetchone()
+            if recipe_row is None:
+                raise SQLiteException(f"Recipe {recipe.name} not in table")
+
+            # Get all current ingredient ids for deletion.
+            ingredient_ids = self._con.execute("SELECT tri.ingredient_id FROM recipe_ingredient tri JOIN recipe tr USING (recipe_id) WHERE tr.name = ?", (recipe.name,)).fetchall()
+
+            # Remove recipe ingredients from existing ri table.
+            self._con.execute(
+                "DELETE FROM recipe_ingredient WHERE recipe_id = ?", (recipe_row[0],)
+            )
+
+            # Maybe remove the dangling ingredients with no ri entries.
+            self._con.executemany("DELETE FROM ingredient WHERE ingredient_id = ?", ingredient_ids)
+
+            # Insert the ri ingredients.
+            for ingredient in recipe.recipe_ingredients:
+                self._con.execute(
+                    "INSERT OR IGNORE INTO ingredient(name) VALUES(?)",
+                    (ingredient.name,),
+                )
+                ingredient_id = self._con.execute(
+                    "SELECT ingredient_id FROM ingredient WHERE name = ?",
+                    (ingredient.name,),
+                ).fetchone()[0]
+                self._con.execute(
+                    "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
+                    (recipe_row[0], ingredient_id, ingredient.quantity),
+                )
