@@ -214,7 +214,54 @@ class ClientTestCase(unittest.TestCase):
         self.assertIsNone(self.client.get_recipe(recipe.name))
 
     def test_delete_many_recipe(self):
-        pass
+        # Bread
+        bread_recipe = data_layer.StructuredRecipe(
+            "bread",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 10),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        # Cake
+        cake_recipe = data_layer.StructuredRecipe(
+            "cake",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 5),
+                data_layer.RecipeIngredient("water", 7),
+                data_layer.RecipeIngredient("egg", 2),
+                data_layer.RecipeIngredient("sugar", 4),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        # Spaghetti
+        spaghetti_recipe = data_layer.StructuredRecipe(
+            "spaghetti",
+            recipe_ingredients={
+                data_layer.RecipeIngredient("flour", 8),
+                data_layer.RecipeIngredient("water", 2),
+                data_layer.RecipeIngredient("egg", 5),
+                data_layer.RecipeIngredient("salt", 1),
+            },
+        )
+        self.client.create_recipe(bread_recipe)
+        self.client.create_recipe(cake_recipe)
+        self.client.create_recipe(spaghetti_recipe)
+
+        self.client.delete_recipe("bread")
+        self.assertIsNone(self.client.get_recipe("bread"))
+        self.assertEqual(cake_recipe, self.client.get_recipe("cake"))
+        self.assertEqual(spaghetti_recipe, self.client.get_recipe("spaghetti"))
+
+        self.client.delete_recipe("cake")
+        self.assertIsNone(self.client.get_recipe("bread"))
+        self.assertIsNone(self.client.get_recipe("cake"))
+        self.assertEqual(spaghetti_recipe, self.client.get_recipe("spaghetti"))
+
+        self.client.delete_recipe("spaghetti")
+        self.assertIsNone(self.client.get_recipe("bread"))
+        self.assertIsNone(self.client.get_recipe("cake"))
+        self.assertIsNone(self.client.get_recipe("spaghetti"))
 
 
 if __name__ == "__main__":
