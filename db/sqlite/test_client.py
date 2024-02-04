@@ -3,6 +3,7 @@ import unittest
 from db import data_layer
 from db.sqlite import client
 
+
 class ClientTestCase(unittest.TestCase):
 
     def setUp(self):

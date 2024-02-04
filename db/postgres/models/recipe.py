@@ -1,4 +1,5 @@
 """Model for recipes."""
+
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Column, ForeignKey, Table
 from sqlalchemy.sql.sqltypes import Integer, String

@@ -2,8 +2,9 @@ import sqlite3
 
 from db import data_layer
 
-class SQLiteException(Exception):
-    ...
+
+class SQLiteException(Exception): ...
+
 
 RECIPE_SCHEMA = """
 CREATE TABLE recipe(
@@ -30,6 +31,7 @@ CREATE TABLE recipe_ingredient(
 )
 """
 
+
 class SQLiteClient(data_layer.DataAccessClient):
 
     def __init__(self, db_path: str):
@@ -55,26 +57,52 @@ class SQLiteClient(data_layer.DataAccessClient):
 
         with self._con:
             # Check if recipe already exists.
-            if self._con.execute("SELECT * FROM recipe WHERE name == ?", (recipe.name,)).fetchone() is not None:
+            if (
+                self._con.execute(
+                    "SELECT * FROM recipe WHERE name == ?", (recipe.name,)
+                ).fetchone()
+                is not None
+            ):
                 raise SQLiteException(f"Already inserted {recipe}")
 
             # Insert the recipe.
-            recipe_id = self._con.execute("INSERT INTO recipe(name) VALUES(?)", (recipe.name,)).lastrowid
+            recipe_id = self._con.execute(
+                "INSERT INTO recipe(name) VALUES(?)", (recipe.name,)
+            ).lastrowid
 
             # Insert the recipe_ingredients.
             for ingredient in recipe.recipe_ingredients:
-                self._con.execute("INSERT OR IGNORE INTO ingredient(name) VALUES(?)", (ingredient.name,))
-                ingredient_id = cur.execute("SELECT ingredient_id FROM ingredient WHERE name = ?", (ingredient.name,)).fetchone()[0]
-                cur.execute("INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)", (recipe_id, ingredient_id, ingredient.quantity))
-
+                self._con.execute(
+                    "INSERT OR IGNORE INTO ingredient(name) VALUES(?)",
+                    (ingredient.name,),
+                )
+                ingredient_id = cur.execute(
+                    "SELECT ingredient_id FROM ingredient WHERE name = ?",
+                    (ingredient.name,),
+                ).fetchone()[0]
+                cur.execute(
+                    "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
+                    (recipe_id, ingredient_id, ingredient.quantity),
+                )
 
     def get_recipe(self, recipe_name: str) -> data_layer.StructuredRecipe | None:
         with self._con:
             # Check if recipe already exists.
-            if self._con.execute("SELECT * FROM recipe WHERE name == ?", (recipe_name,)).fetchone() is None:
+            if (
+                self._con.execute(
+                    "SELECT * FROM recipe WHERE name == ?", (recipe_name,)
+                ).fetchone()
+                is None
+            ):
                 return None
-            res = self._con.execute("SELECT tr.name, ti.name, tri.quantity FROM recipe AS tr JOIN recipe_ingredient tri USING (recipe_id) JOIN ingredient AS ti USING (ingredient_id) WHERE tr.name == ?", (recipe_name,)).fetchall()
+            res = self._con.execute(
+                "SELECT tr.name, ti.name, tri.quantity FROM recipe AS tr JOIN recipe_ingredient tri USING (recipe_id) JOIN ingredient AS ti USING (ingredient_id) WHERE tr.name == ?",
+                (recipe_name,),
+            ).fetchall()
         recipe_ingredients = set()
         for row in res:
             recipe_ingredients.add(data_layer.RecipeIngredient(row[1], row[2]))
-        return data_layer.StructuredRecipe(name=recipe_name, recipe_ingredients=recipe_ingredients)
+        return data_layer.StructuredRecipe(
+            name=recipe_name, recipe_ingredients=recipe_ingredients
+        )
+
