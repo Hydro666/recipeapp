@@ -114,7 +114,9 @@ class ClientTestCase(unittest.TestCase):
             recipe_ingredients={data_layer.RecipeIngredient("flour", 4)},
         )
         self.client.create_recipe(recipe)
-        updated_recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
+        updated_recipe = data_layer.StructuredRecipe(
+            name="Pascetti", recipe_ingredients=set()
+        )
         self.client.update_recipe(updated_recipe)
         self.assertEqual(updated_recipe, self.client.get_recipe("Pascetti"))
 

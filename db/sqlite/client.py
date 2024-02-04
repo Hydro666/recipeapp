@@ -124,7 +124,9 @@ class SQLiteClient(data_layer.DataAccessClient):
             )
 
             # Remove the dangling ingredients with no ri entries.
-            self._con.execute("DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)")
+            self._con.execute(
+                "DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)"
+            )
 
             # Insert the ri ingredients.
             for ingredient in recipe.recipe_ingredients:
