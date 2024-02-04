@@ -142,3 +142,26 @@ class SQLiteClient(data_layer.DataAccessClient):
                     "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
                     (recipe_row[0], ingredient_id, ingredient.quantity),
                 )
+
+    def delete_recipe(self, recipe_name: str):
+        with self._con:
+            recipe_row = self._con.execute(
+                "SELECT recipe_id FROM recipe WHERE name == ?", (recipe_name,)
+            ).fetchone()
+            if recipe_row is None:
+                raise SQLiteException(f"Recipe {recipe_name} not in table")
+
+            # Remove recipe ingredients from existing ri table.
+            self._con.execute(
+                "DELETE FROM recipe_ingredient WHERE recipe_id = ?", (recipe_row[0],)
+            )
+
+            # Delete recipe entry.
+            self._con.execute(
+                "DELETE FROM recipe WHERE recipe_id = ?", (recipe_row[0],)
+            )
+
+            # Remove the dangling ingredients with no ri entries.
+            self._con.execute(
+                "DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)"
+            )
