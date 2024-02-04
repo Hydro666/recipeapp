@@ -196,6 +196,26 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(updated_cake_recipe, self.client.get_recipe("cake"))
         self.assertEqual(updated_spaghetti_recipe, self.client.get_recipe("spaghetti"))
 
+    def test_delete_recipe(self):
+        recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
+        self.client.create_recipe(recipe)
+        actual = self.client.get_recipe(recipe.name)
+        self.assertEqual(recipe, actual)
+
+        self.client.delete_recipe("Pascetti")
+        self.assertIsNone(self.client.get_recipe(recipe.name))
+
+        # Check we can add it again and delete again.
+        self.client.create_recipe(recipe)
+        actual = self.client.get_recipe(recipe.name)
+        self.assertEqual(recipe, actual)
+
+        self.client.delete_recipe("Pascetti")
+        self.assertIsNone(self.client.get_recipe(recipe.name))
+
+    def test_delete_many_recipe(self):
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()
