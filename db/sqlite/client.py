@@ -57,37 +57,40 @@ class SQLiteClient(data_layer.DataAccessClient):
             # Create recipe ingredient table.
             self._con.execute(RECIPE_INGREDIENT_SCHEMA)
 
+    def _create_recipe_no_transaction(self, recipe:data_layer.StructuredRecipe):
+        # Check if recipe already exists.
+        if (
+            self._con.execute(
+                "SELECT * FROM recipe WHERE name == ?", (recipe.name,)
+            ).fetchone()
+            is not None
+        ):
+            raise SQLiteException(f"Already inserted {recipe}")
+
+        # Insert the recipe.
+        recipe_id = self._con.execute(
+            "INSERT INTO recipe(name) VALUES(?)", (recipe.name,)
+        ).lastrowid
+
+        # Insert the recipe_ingredients.
+        for ingredient in recipe.recipe_ingredients:
+            self._con.execute(
+                "INSERT OR IGNORE INTO ingredient(name) VALUES(?)",
+                (ingredient.name,),
+            )
+            ingredient_id = self._con.execute(
+                "SELECT ingredient_id FROM ingredient WHERE name = ?",
+                (ingredient.name,),
+            ).fetchone()[0]
+            self._con.execute(
+                "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
+                (recipe_id, ingredient_id, ingredient.quantity),
+            )
+
     def create_recipe(self, recipe: data_layer.StructuredRecipe):
         """Fails if recipe already inserted"""
         with self._con:
-            # Check if recipe already exists.
-            if (
-                self._con.execute(
-                    "SELECT * FROM recipe WHERE name == ?", (recipe.name,)
-                ).fetchone()
-                is not None
-            ):
-                raise SQLiteException(f"Already inserted {recipe}")
-
-            # Insert the recipe.
-            recipe_id = self._con.execute(
-                "INSERT INTO recipe(name) VALUES(?)", (recipe.name,)
-            ).lastrowid
-
-            # Insert the recipe_ingredients.
-            for ingredient in recipe.recipe_ingredients:
-                self._con.execute(
-                    "INSERT OR IGNORE INTO ingredient(name) VALUES(?)",
-                    (ingredient.name,),
-                )
-                ingredient_id = self._con.execute(
-                    "SELECT ingredient_id FROM ingredient WHERE name = ?",
-                    (ingredient.name,),
-                ).fetchone()[0]
-                self._con.execute(
-                    "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
-                    (recipe_id, ingredient_id, ingredient.quantity),
-                )
+            self._create_recipe_no_transaction(recipe)
 
     def get_recipe(self, recipe_name: str) -> data_layer.StructuredRecipe | None:
         with self._con:
@@ -142,26 +145,28 @@ class SQLiteClient(data_layer.DataAccessClient):
                     "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
                     (recipe_row[0], ingredient_id, ingredient.quantity),
                 )
+    def _delete_recipe_no_transaction(self, recipe_name: str):
+        recipe_row = self._con.execute(
+            "SELECT recipe_id FROM recipe WHERE name == ?", (recipe_name,)
+        ).fetchone()
+        if recipe_row is None:
+            raise SQLiteException(f"Recipe {recipe_name} not in table")
+
+        # Remove recipe ingredients from existing ri table.
+        self._con.execute(
+            "DELETE FROM recipe_ingredient WHERE recipe_id = ?", (recipe_row[0],)
+        )
+
+        # Delete recipe entry.
+        self._con.execute(
+            "DELETE FROM recipe WHERE recipe_id = ?", (recipe_row[0],)
+        )
+
+        # Remove the dangling ingredients with no ri entries.
+        self._con.execute(
+            "DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)"
+        )
 
     def delete_recipe(self, recipe_name: str):
         with self._con:
-            recipe_row = self._con.execute(
-                "SELECT recipe_id FROM recipe WHERE name == ?", (recipe_name,)
-            ).fetchone()
-            if recipe_row is None:
-                raise SQLiteException(f"Recipe {recipe_name} not in table")
-
-            # Remove recipe ingredients from existing ri table.
-            self._con.execute(
-                "DELETE FROM recipe_ingredient WHERE recipe_id = ?", (recipe_row[0],)
-            )
-
-            # Delete recipe entry.
-            self._con.execute(
-                "DELETE FROM recipe WHERE recipe_id = ?", (recipe_row[0],)
-            )
-
-            # Remove the dangling ingredients with no ri entries.
-            self._con.execute(
-                "DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)"
-            )
+            self._delete_recipe_no_transaction(recipe_name)
