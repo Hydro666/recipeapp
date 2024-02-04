@@ -118,16 +118,13 @@ class SQLiteClient(data_layer.DataAccessClient):
             if recipe_row is None:
                 raise SQLiteException(f"Recipe {recipe.name} not in table")
 
-            # Get all current ingredient ids for deletion.
-            ingredient_ids = self._con.execute("SELECT tri.ingredient_id FROM recipe_ingredient tri JOIN recipe tr USING (recipe_id) WHERE tr.name = ?", (recipe.name,)).fetchall()
-
             # Remove recipe ingredients from existing ri table.
             self._con.execute(
                 "DELETE FROM recipe_ingredient WHERE recipe_id = ?", (recipe_row[0],)
             )
 
-            # Maybe remove the dangling ingredients with no ri entries.
-            self._con.executemany("DELETE FROM ingredient WHERE ingredient_id = ?", ingredient_ids)
+            # Remove the dangling ingredients with no ri entries.
+            self._con.execute("DELETE FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM recipe_ingredient)")
 
             # Insert the ri ingredients.
             for ingredient in recipe.recipe_ingredients:
