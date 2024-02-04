@@ -32,10 +32,16 @@ CREATE TABLE recipe_ingredient(
 """
 
 
+def _make_connection(db_path: str) -> sqlite3.Connection:
+    con = sqlite3.connect(db_path)
+    con.execute("PRAGMA foreign_keys = ON")
+    return con
+
+
 class SQLiteClient(data_layer.DataAccessClient):
 
     def __init__(self, db_path: str):
-        self._con = sqlite3.connect(db_path)
+        self._con = _make_connection(db_path)
 
         self._create_database()
 
@@ -53,8 +59,6 @@ class SQLiteClient(data_layer.DataAccessClient):
 
     def create_recipe(self, recipe: data_layer.StructuredRecipe):
         """Fails if recipe already inserted"""
-        cur = self._con.cursor()
-
         with self._con:
             # Check if recipe already exists.
             if (
@@ -76,11 +80,11 @@ class SQLiteClient(data_layer.DataAccessClient):
                     "INSERT OR IGNORE INTO ingredient(name) VALUES(?)",
                     (ingredient.name,),
                 )
-                ingredient_id = cur.execute(
+                ingredient_id = self._con.execute(
                     "SELECT ingredient_id FROM ingredient WHERE name = ?",
                     (ingredient.name,),
                 ).fetchone()[0]
-                cur.execute(
+                self._con.execute(
                     "INSERT INTO recipe_ingredient(recipe_id, ingredient_id, quantity) VALUES(?, ?, ?)",
                     (recipe_id, ingredient_id, ingredient.quantity),
                 )
