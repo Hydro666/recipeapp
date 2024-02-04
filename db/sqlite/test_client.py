@@ -79,6 +79,21 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(cake_recipe, self.client.get_recipe("cake"))
         self.assertEqual(spaghetti_recipe, self.client.get_recipe("spaghetti"))
 
+    def test_update_recipe_with_no_target(self):
+        recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
+        with self.assertRaises(client.SQLiteException):
+            self.client.update_recipe(recipe)
+
+    def test_update_recipe(self):
+        recipe = data_layer.StructuredRecipe(name="Pascetti", recipe_ingredients=set())
+        self.client.create_recipe(recipe)
+        updated_recipe = data_layer.StructuredRecipe(
+            name="Pascetti",
+            recipe_ingredients={data_layer.RecipeIngredient("flour", 4)},
+        )
+        self.client.update_recipe(updated_recipe)
+        self.assertEqual(updated_recipe, self.client.get_recipe("Pascetti"))
+
 
 if __name__ == "__main__":
     unittest.main()
