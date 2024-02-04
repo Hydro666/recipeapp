@@ -6,6 +6,20 @@ from db.sqlite import client
 
 class ClientTestCase(unittest.TestCase):
 
+    def _dump_tables(self):
+        res = self.client._con.execute("SELECT * FROM recipe").fetchall()
+        print("Recipe contents:")
+        for r in res:
+            print(r)
+        res = self.client._con.execute("SELECT * FROM ingredient").fetchall()
+        print("Intredient contents:")
+        for r in res:
+            print(r)
+        res = self.client._con.execute("SELECT * FROM recipe_ingredient").fetchall()
+        print("Recipe intredient contents:")
+        for r in res:
+            print(r)
+
     def setUp(self):
         self.client = client.SQLiteClient(":memory:")
 
