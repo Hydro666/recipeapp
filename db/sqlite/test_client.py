@@ -1,10 +1,11 @@
 import unittest
+from absl.testing import absltest
 
 from db import data_layer
 from db.sqlite import client
 
 
-class ClientTestCase(unittest.TestCase):
+class ClientTestCase(absltest.TestCase):
 
     def _dump_tables(self):
         res = self.client._con.execute("SELECT * FROM recipe").fetchall()
@@ -265,4 +266,4 @@ class ClientTestCase(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    absltest.main()

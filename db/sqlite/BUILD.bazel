@@ -13,5 +13,6 @@ py_test(
     deps = [
         ":sqlite",
         "//db",
+        "@pip//absl_py",
     ],
 )
