@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from db import data_layer
@@ -43,7 +44,8 @@ class SQLiteClient(data_layer.DataAccessClient):
     def __init__(self, db_path: str):
         self._con = _make_connection(db_path)
 
-        self._create_database()
+        if not os.path.exists(db_path):
+            self._create_database()
 
     def _create_database(self):
 
