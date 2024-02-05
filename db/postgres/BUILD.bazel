@@ -1,0 +1,24 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+py_binary(
+    name = "postgres_driver",
+    srcs = ["postgres_driver.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//db",
+        "@pip//sqlalchemy",
+    ],
+)
+
+py_library(
+    name = "postgres",
+    srcs = [
+        "__init__.py",
+        "postgres_driver.py",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//db",
+        "@pip//sqlalchemy",
+    ],
+)

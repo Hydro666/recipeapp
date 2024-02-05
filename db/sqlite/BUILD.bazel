@@ -1,0 +1,20 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_test")
+
+py_library(
+    name = "sqlite",
+    srcs = [
+        "__init__.py",
+        "client.py",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = ["//db"],
+)
+
+py_test(
+    name = "test_client",
+    srcs = ["test_client.py"],
+    deps = [
+        ":sqlite",
+        "//db",
+    ],
+)
