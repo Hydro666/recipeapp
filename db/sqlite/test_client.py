@@ -1,4 +1,3 @@
-import unittest
 from absl.testing import absltest
 
 from db import data_layer

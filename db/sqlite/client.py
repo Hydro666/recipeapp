@@ -59,7 +59,7 @@ class SQLiteClient(data_layer.DataAccessClient):
             # Create recipe ingredient table.
             self._con.execute(RECIPE_INGREDIENT_SCHEMA)
 
-    def _create_recipe_no_transaction(self, recipe:data_layer.StructuredRecipe):
+    def _create_recipe_no_transaction(self, recipe: data_layer.StructuredRecipe):
         # Check if recipe already exists.
         if (
             self._con.execute(
@@ -133,9 +133,7 @@ class SQLiteClient(data_layer.DataAccessClient):
         )
 
         # Delete recipe entry.
-        self._con.execute(
-            "DELETE FROM recipe WHERE recipe_id = ?", (recipe_row[0],)
-        )
+        self._con.execute("DELETE FROM recipe WHERE recipe_id = ?", (recipe_row[0],))
 
         # Remove the dangling ingredients with no ri entries.
         self._con.execute(

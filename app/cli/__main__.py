@@ -1,12 +1,17 @@
 from db import data_layer
 from db.sqlite import client
-import argparse
 
-import sys
+from absl import app
+from absl import flags
 
-def dispatch_action(args) -> int:
-    sql_client = client.SQLiteClient(args.db_path)
-    if args.action == "create":
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('db_path', None, 'Path to the sqlite db file')
+
+
+def dispatch_action(command, db_path) -> int:
+    sql_client = client.SQLiteClient(db_path)
+    if command == "create":
         recipe_name = input("Enter the new recipe name: ")
 
         to_create = data_layer.StructuredRecipe(recipe_name, set())
@@ -17,23 +22,26 @@ def dispatch_action(args) -> int:
                 ingredient_name = input("Enter name of ingredient: ")
                 quantity = input("Enter quantity of ingredient: ")
                 if quantity.isdecimal():
-                    to_create.recipe_ingredients.add(data_layer.RecipeIngredient(ingredient_name, int(quantity)))
+                    to_create.recipe_ingredients.add(
+                        data_layer.RecipeIngredient(ingredient_name, int(quantity))
+                    )
                 else:
                     print(f"Quantity {quantity} is not decimal")
                     continue
             elif add_ingredient == "n":
                 break
         sql_client.create_recipe(to_create)
-    elif args.action == "get":
+    elif command == "get":
         recipe_name = input("Enter recipe to get: ")
 
         recipe = sql_client.get_recipe(recipe_name)
         if recipe is None:
             print(f"No recipe with name {recipe_name} found")
         else:
-            print('\n'.join(render_recipe(recipe)))
+            print("\n".join(render_recipe(recipe)))
 
     return 0
+
 
 def render_recipe(recipe: data_layer.StructuredRecipe):
     collected = [f"Recipe for {recipe.name}:"]
@@ -42,10 +50,10 @@ def render_recipe(recipe: data_layer.StructuredRecipe):
     return collected
 
 
+def main(argv):
+    args, = argv[1:]
+    return dispatch_action(args, FLAGS.db_path)
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Front end for recipe app")
-    parser.add_argument("action", choices=["create", "get"], type=str)
-    parser.add_argument("--db_path", type=str)
-    args = parser.parse_args()
-    sys.exit(dispatch_action(args))
+    app.run(main)
