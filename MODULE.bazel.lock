@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "05cc83b7a5c67ecbb2a601e7eb22bb08ccd2fda145d651b65e9b2dabdf05ba71",
+  "moduleFileHash": "c52f5bcc1421d21a53ecf0740fe5299b65f84caa9fd278ceed0213694a7cde1f",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -72,7 +72,7 @@
               "attributeValues": {
                 "hub_name": "pip",
                 "python_version": "3.12",
-                "requirements_lock": "//:requirements_lock.txt"
+                "requirements_lock": "//:requirements.txt"
               },
               "devDependency": false,
               "location": {
