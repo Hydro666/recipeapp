@@ -5,20 +5,17 @@ py_binary(
     srcs = ["postgres_driver.py"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//db",
+        "//db/postgres/models",
         "@pip//sqlalchemy",
     ],
 )
 
 py_library(
     name = "postgres",
-    srcs = [
-        "__init__.py",
-        "postgres_driver.py",
-    ],
+    srcs = ["postgres_driver.py"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//db",
+        "//db/postgres/models",
         "@pip//sqlalchemy",
     ],
 )

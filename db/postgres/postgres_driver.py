@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.models import recipe
+from db.postgres.models import recipe
 
 engine = create_engine(
     "postgresql://postgres:postgres@127.0.0.1:5432/testytest", echo=True

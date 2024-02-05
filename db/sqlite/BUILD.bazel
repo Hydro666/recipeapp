@@ -2,10 +2,7 @@ load("@rules_python//python:defs.bzl", "py_library", "py_test")
 
 py_library(
     name = "sqlite",
-    srcs = [
-        "__init__.py",
-        "client.py",
-    ],
+    srcs = ["client.py"],
     visibility = ["//:__subpackages__"],
     deps = ["//db"],
 )

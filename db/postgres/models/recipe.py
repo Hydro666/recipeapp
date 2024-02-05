@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Column, ForeignKey, Table
 from sqlalchemy.sql.sqltypes import Integer, String
 
-from db.models import base
+from db.postgres.models import base
 
 association = Table(
     "recipes_ingredients",

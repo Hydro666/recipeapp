@@ -3,13 +3,9 @@ load("@rules_python//python:defs.bzl", "py_library")
 py_library(
     name = "models",
     srcs = [
-        "__init__.py",
         "base.py",
         "recipe.py",
     ],
     visibility = ["//:__subpackages__"],
-    deps = [
-        "//db",
-        "@pip//sqlalchemy",
-    ],
+    deps = ["@pip//sqlalchemy"],
 )
