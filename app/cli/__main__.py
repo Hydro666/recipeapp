@@ -6,6 +6,7 @@ import sys
 
 def dispatch_action(args) -> int:
     sql_client = client.SQLiteClient(args.db_path)
+    print("Handling", args)
     if args.action == "create":
         recipe_name = input("Enter the new recipe name: ")
 
@@ -24,12 +25,31 @@ def dispatch_action(args) -> int:
             elif add_ingredient == "n":
                 break
         sql_client.create_recipe(to_create)
+    elif args.action == "get":
+        recipe_name = input("Enter recipe to get: ")
+
+        recipe = sql_client.get_recipe(recipe_name)
+        if recipe is None:
+            print(f"No recipe with name {recipe_name} found")
+        else:
+            print('\n'.join(render_recipe(recipe)))
+
     return 0
+
+def render_recipe(recipe: data_layer.StructuredRecipe):
+    collected = [f"Recipe for {recipe.name}:"]
+    for ingredient in recipe.recipe_ingredients:
+        collected.append(f" - {ingredient.name}, {ingredient.quantity}")
+    return collected
+
 
 
 if __name__ == "__main__":
+    print("Starting app")
     parser = argparse.ArgumentParser(description="Front end for recipe app")
     parser.add_argument("action", choices=["create", "get"], type=str)
     parser.add_argument("--db_path", type=str)
+    print("Added args")
     args = parser.parse_args()
+    print("Parsed args")
     sys.exit(dispatch_action(args))
