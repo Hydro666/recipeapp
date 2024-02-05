@@ -5,6 +5,18 @@
 
 manifest:
   modules_mapping:
+    absl: absl_py
+    absl.app: absl_py
+    absl.command_name: absl_py
+    absl.flags: absl_py
+    absl.flags.argparse_flags: absl_py
+    absl.logging: absl_py
+    absl.logging.converter: absl_py
+    absl.testing: absl_py
+    absl.testing.absltest: absl_py
+    absl.testing.flagsaver: absl_py
+    absl.testing.parameterized: absl_py
+    absl.testing.xml_reporter: absl_py
     click: click
     click.core: click
     click.decorators: click
@@ -369,4 +381,4 @@ manifest:
     werkzeug.wsgi: werkzeug
   pip_repository:
     name: pip
-integrity: 3495420ca800fe9b0c2a3f2a12748cc1092626fa6b55d917d2afd389d7f41249
+integrity: 466b842f00aff8dba3ec442723749ce39d2c85d2ef8e83715bfcfb12ea4967c6
