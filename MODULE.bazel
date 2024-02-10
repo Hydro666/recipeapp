@@ -25,3 +25,32 @@ use_repo(pip, "pip")
 bazel_dep(name = "rules_python_gazelle_plugin", version = "0.29.0")
 
 bazel_dep(name = "gazelle", version = "0.35.0", repo_name = "bazel_gazelle")
+
+### Rules Js (This is not the same as rules nodejs).
+bazel_dep(name = "aspect_rules_js", version = "1.37.1")
+bazel_dep(name = "aspect_rules_ts", version = "2.1.0")
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm", dev_dependency = True)
+use_repo(pnpm, "pnpm")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
+npm.npm_translate_lock(
+    name = "npm",
+    npmrc = "//:.npmrc",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    public_hoist_packages = {
+        "@next/eslint-plugin-next": ["next.js"],
+        "eslint-config-react-app": ["react"],
+        "eslint@8.28.0": ["react"],
+    },
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(npm, "npm")
+
+rules_ts_ext = use_extension(
+    "@aspect_rules_ts//ts:extensions.bzl",
+    "ext",
+    dev_dependency = True,
+)
+rules_ts_ext.deps()
+use_repo(rules_ts_ext, "npm_typescript")
