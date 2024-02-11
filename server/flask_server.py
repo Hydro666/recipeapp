@@ -1,7 +1,7 @@
 from absl import app
 from flask import Flask
 
-flask_app == Flask(__name__)
+flask_app = Flask(__name__)
 
 @flask_app.route("/")
 def hello_world():
