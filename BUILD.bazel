@@ -1,9 +1,13 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//:eslint/package_json.bzl", eslint_bin = "bin")
 load("@pip//:requirements.bzl", "all_whl_requirements")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+
+package(default_visibility = ["//:__subpackages__"])
 
 # This rule fetches the metadata for python packages we depend on. That data is
 # required for the gazelle_python_manifest rule to update our manifest file.
@@ -55,11 +59,6 @@ py_library(
 )
 
 # Js stuff
-
-load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@npm//:eslint/package_json.bzl", eslint_bin = "bin")
-
-package(default_visibility = ["//:__subpackages__"])
 
 # Create the root of the "virtual store" of npm dependencies under bazel-out.
 # This must be done in the package where the pnpm workspace is rooted.
