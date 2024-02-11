@@ -1,8 +1,14 @@
-from absl import app
+from absl import base_app
 from flask import Flask
 
+app == Flask(__name__)
+
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
+
 def main(argv):
-    pass
+    app.run()
 
 if __name__ == "__main__":
-    app.run(main)
+    base_app.run(main)
