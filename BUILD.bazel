@@ -43,21 +43,6 @@ gazelle(
     gazelle = "@rules_python_gazelle_plugin//python:gazelle_binary",
 )
 
-py_library(
-    name = "recipeapp",
-    srcs = [
-        "scripts/script.py",
-        "server/flask_server/server.py",
-    ],
-    visibility = ["//:__subpackages__"],
-    deps = [
-        "//db",
-        "//db/sqlite",
-        "@pip//absl_py",
-        "@pip//flask",
-    ],
-)
-
 # Js stuff
 
 # Create the root of the "virtual store" of npm dependencies under bazel-out.
@@ -68,10 +53,22 @@ eslint_bin.eslint_binary(name = "eslint")
 
 py_binary(
     name = "script",
-    srcs = ["server/flask_server/server.py"],
+    srcs = ["scripts/script.py"],
     visibility = ["//:__subpackages__"],
     deps = [
+        "//db",
+        "//db/sqlite",
         "@pip//absl_py",
-        "@pip//flask",
+    ],
+)
+
+py_library(
+    name = "recipeapp",
+    srcs = ["scripts/script.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//db",
+        "//db/sqlite",
+        "@pip//absl_py",
     ],
 )

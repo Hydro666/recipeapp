@@ -1,0 +1,21 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+py_binary(
+    name = "flask_server",
+    srcs = ["flask_server.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "@pip//absl_py",
+        "@pip//flask",
+    ],
+)
+
+py_library(
+    name = "server",
+    srcs = ["flask_server.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "@pip//absl_py",
+        "@pip//flask",
+    ],
+)
