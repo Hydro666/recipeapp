@@ -1,3 +1,4 @@
+from absl import app
 from db.sqlite import client
 
 from db import data_layer
@@ -34,6 +35,11 @@ spaghetti_recipe = data_layer.StructuredRecipe(
         data_layer.RecipeIngredient("salt", 1),
     },
 )
-c.create_recipe(bread_recipe)
-c.create_recipe(cake_recipe)
-c.create_recipe(spaghetti_recipe)
+
+def main(argv):
+    c.create_recipe(bread_recipe)
+    c.create_recipe(cake_recipe)
+    c.create_recipe(spaghetti_recipe)
+
+if __name__ == "__main__":
+    app.run(main)

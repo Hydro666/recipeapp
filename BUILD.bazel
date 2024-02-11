@@ -1,6 +1,6 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@pip//:requirements.bzl", "all_whl_requirements")
-load("@rules_python//python:defs.bzl", "py_library")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
 load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
@@ -41,11 +41,16 @@ gazelle(
 
 py_library(
     name = "recipeapp",
-    srcs = ["scripts/script.py"],
+    srcs = [
+        "scripts/script.py",
+        "server/flask_server/server.py",
+    ],
     visibility = ["//:__subpackages__"],
     deps = [
         "//db",
         "//db/sqlite",
+        "@pip//absl_py",
+        "@pip//flask",
     ],
 )
 
@@ -61,3 +66,13 @@ package(default_visibility = ["//:__subpackages__"])
 npm_link_all_packages(name = "node_modules")
 
 eslint_bin.eslint_binary(name = "eslint")
+
+py_binary(
+    name = "script",
+    srcs = ["server/flask_server/server.py"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "@pip//absl_py",
+        "@pip//flask",
+    ],
+)
