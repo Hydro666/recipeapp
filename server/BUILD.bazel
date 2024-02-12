@@ -4,6 +4,7 @@ py_binary(
     name = "flask_server",
     srcs = ["flask_server.py"],
     visibility = ["//:__subpackages__"],
+    data = ["//data"],
     deps = [
         "//db",
         "//db/sqlite",
