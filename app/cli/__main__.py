@@ -6,7 +6,7 @@ from absl import flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('db_path', None, 'Path to the sqlite db file')
+flags.DEFINE_string("db_path", None, "Path to the sqlite db file")
 
 
 def dispatch_action(command, db_path) -> int:
@@ -51,7 +51,7 @@ def render_recipe(recipe: data_layer.StructuredRecipe):
 
 
 def main(argv):
-    args, = argv[1:]
+    (args,) = argv[1:]
     return dispatch_action(args, FLAGS.db_path)
 
 

@@ -5,7 +5,6 @@ from db.sqlite import client
 
 
 class ClientTestCase(absltest.TestCase):
-
     def _dump_tables(self):
         res = self.client._con.execute("SELECT * FROM recipe").fetchall()
         print("Recipe contents:")

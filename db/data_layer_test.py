@@ -2,6 +2,8 @@ from absl.testing import absltest
 from db import data_layer
 
 """Function to sort json dictionaries."""
+
+
 def ordered(obj):
     if isinstance(obj, dict):
         return sorted((k, ordered(v)) for k, v in obj.items())
@@ -10,20 +12,25 @@ def ordered(obj):
     else:
         return obj
 
-class DataSerializerTest(absltest.TestCase):
 
+class DataSerializerTest(absltest.TestCase):
     def _assert_serialized_json_objects_are_equal(self, j1, j2):
         self.assertSameStructure(ordered(j1), ordered(j2))
 
     def test_should_serialize_structured_recipe_with_ingredients_to_json(self):
-        structured_recipe = data_layer.StructuredRecipe("bread", {
-            data_layer.RecipeIngredient("flour", 100),
-            data_layer.RecipeIngredient("water", 80),
-            data_layer.RecipeIngredient("salt", 3),
-            data_layer.RecipeIngredient("yeast", 1),
-        })
+        structured_recipe = data_layer.StructuredRecipe(
+            "bread",
+            {
+                data_layer.RecipeIngredient("flour", 100),
+                data_layer.RecipeIngredient("water", 80),
+                data_layer.RecipeIngredient("salt", 3),
+                data_layer.RecipeIngredient("yeast", 1),
+            },
+        )
 
-        actual = data_layer.DataSerializer().serialize_structured_recipe_to_json(structured_recipe)
+        actual = data_layer.DataSerializer().serialize_structured_recipe_to_json(
+            structured_recipe
+        )
 
         expected = {
             "name": "bread",
@@ -32,19 +39,20 @@ class DataSerializerTest(absltest.TestCase):
                 {"name": "water", "quantity": 80},
                 {"name": "salt", "quantity": 3},
                 {"name": "yeast", "quantity": 1},
-            ]
+            ],
         }
         self._assert_serialized_json_objects_are_equal(actual, expected)
 
-    def test_should_serialize_recipe_ingredients_field_of_structured_recipe_with_ingredients_as_json_with_empty_list(self):
+    def test_should_serialize_recipe_ingredients_field_of_structured_recipe_with_ingredients_as_json_with_empty_list(
+        self,
+    ):
         structured_recipe = data_layer.StructuredRecipe("bread", set())
 
-        actual = data_layer.DataSerializer().serialize_structured_recipe_to_json(structured_recipe)
+        actual = data_layer.DataSerializer().serialize_structured_recipe_to_json(
+            structured_recipe
+        )
 
-        expected = {
-            "name": "bread",
-            "recipe_ingredients": []
-        }
+        expected = {"name": "bread", "recipe_ingredients": []}
         self._assert_serialized_json_objects_are_equal(actual, expected)
 
     def test_should_parse_valid_json_as_structured_recipe(self):
@@ -55,17 +63,22 @@ class DataSerializerTest(absltest.TestCase):
                 {"name": "water", "quantity": 80},
                 {"name": "salt", "quantity": 3},
                 {"name": "yeast", "quantity": 1},
-            ]
+            ],
         }
 
-        parsed_recipe = data_layer.DataSerializer().parse_json_to_structured_recipe(json_rep)
+        parsed_recipe = data_layer.DataSerializer().parse_json_to_structured_recipe(
+            json_rep
+        )
 
-        expected = data_layer.StructuredRecipe("bread", {
-            data_layer.RecipeIngredient("flour", 100),
-            data_layer.RecipeIngredient("water", 80),
-            data_layer.RecipeIngredient("salt", 3),
-            data_layer.RecipeIngredient("yeast", 1),
-        })
+        expected = data_layer.StructuredRecipe(
+            "bread",
+            {
+                data_layer.RecipeIngredient("flour", 100),
+                data_layer.RecipeIngredient("water", 80),
+                data_layer.RecipeIngredient("salt", 3),
+                data_layer.RecipeIngredient("yeast", 1),
+            },
+        )
         self.assertEqual(parsed_recipe, expected)
 
     def test_should_not_parse_json_with_extra_keys(self):
@@ -77,7 +90,7 @@ class DataSerializerTest(absltest.TestCase):
                 {"name": "water", "quantity": 80},
                 {"name": "salt", "quantity": 3},
                 {"name": "yeast", "quantity": 1},
-            ]
+            ],
         }
 
         with self.assertRaises(ValueError):
@@ -99,13 +112,16 @@ class DataSerializerTest(absltest.TestCase):
     def test_should_not_parse_json_with_non_list_recipe_ingredients(self):
         json_rep = {
             "name": "bread",
-            "recipe_ingredients": str([
-                {"name": "flour", "quantity": 100},
-                {"name": "water", "quantity": 80},
-                {"name": "salt", "quantity": 3},
-                {"name": "yeast", "quantity": 1},
-            ])
+            "recipe_ingredients": str(
+                [
+                    {"name": "flour", "quantity": 100},
+                    {"name": "water", "quantity": 80},
+                    {"name": "salt", "quantity": 3},
+                    {"name": "yeast", "quantity": 1},
+                ]
+            ),
         }
+
 
 if __name__ == "__main__":
     absltest.main()

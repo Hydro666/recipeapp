@@ -4,7 +4,8 @@ import sqlite3
 from db import data_layer
 
 
-class SQLiteException(Exception): ...
+class SQLiteException(Exception):
+    ...
 
 
 RECIPE_SCHEMA = """
@@ -40,7 +41,6 @@ def _make_connection(db_path: str) -> sqlite3.Connection:
 
 
 class SQLiteClient(data_layer.DataAccessClient):
-
     def __init__(self, db_path: str):
         self._con = _make_connection(db_path)
 
@@ -48,7 +48,6 @@ class SQLiteClient(data_layer.DataAccessClient):
             self._create_database()
 
     def _create_database(self):
-
         with self._con:
             # Create Recipe table
             self._con.execute(RECIPE_SCHEMA)

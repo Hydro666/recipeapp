@@ -29,13 +29,13 @@ def create_flask(test_config=None):
         db_connection = client.SQLiteClient(FLAGS.sqlite_db_path)
         recipes = db_connection.list_recipes()
         return recipes
-    
-    return flask_app
 
+    return flask_app
 
 
 def main(argv):
     create_flask().run()
+
 
 if __name__ == "__main__":
     app.run(main)

@@ -36,10 +36,12 @@ spaghetti_recipe = data_layer.StructuredRecipe(
     },
 )
 
+
 def main(argv):
     c.create_recipe(bread_recipe)
     c.create_recipe(cake_recipe)
     c.create_recipe(spaghetti_recipe)
+
 
 if __name__ == "__main__":
     app.run(main)
