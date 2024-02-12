@@ -22,7 +22,10 @@ def create_flask(test_config=None):
         recipe = db_connection.get_recipe(name)
         if recipe is None:
             flask.abort(404)
-        return data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
+        data = data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
+        response = flask.jsonify(data)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
 
     @flask_app.route("/recipes")
     def list_recipes():
