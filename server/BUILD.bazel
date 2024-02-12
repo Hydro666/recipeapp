@@ -10,6 +10,7 @@ py_binary(
         "//db/sqlite",
         "@pip//absl_py",
         "@pip//flask",
+        "@pip//flask_cors",
     ],
 )
 
@@ -22,5 +23,6 @@ py_library(
         "//db/sqlite",
         "@pip//absl_py",
         "@pip//flask",
+        "@pip//flask_cors",
     ],
 )

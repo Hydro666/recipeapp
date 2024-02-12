@@ -5,6 +5,7 @@ from absl import app
 from absl import flags
 from absl import logging
 import flask
+from flask_cors import CORS
 
 FLAGS = flags.FLAGS
 
@@ -14,6 +15,7 @@ flags.mark_flag_as_required("sqlite_db_path")
 
 def create_flask(test_config=None):
     flask_app = flask.Flask(__name__)
+    CORS(flask_app)
 
     @flask_app.route("/recipe/<name>")
     def get_recipe(name: str):
@@ -22,10 +24,7 @@ def create_flask(test_config=None):
         recipe = db_connection.get_recipe(name)
         if recipe is None:
             flask.abort(404)
-        data = data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
-        response = flask.jsonify(data)
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
+        return data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
 
     @flask_app.route("/recipes")
     def list_recipes():
