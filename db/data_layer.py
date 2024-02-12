@@ -48,6 +48,9 @@ class DataAccessClient:
     @abc.abstractmethod
     def get_recipe(self, recipe_name: str) -> StructuredRecipe: ...
 
+    @abc.abstractmethod
+    def list_recipes(self) -> StructuredRecipe: ...
+
     # @abc.abstractmethod
     def update_recipe(self, recipe: StructuredRecipe): ...
 

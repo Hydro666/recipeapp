@@ -115,6 +115,11 @@ class SQLiteClient(data_layer.DataAccessClient):
             name=recipe_name, recipe_ingredients=recipe_ingredients
         )
 
+    def list_recipes(self) -> data_layer.StructuredRecipe:
+        with self._con:
+            res = self._con.execute("SELECT name FROM recipe")
+            return [x[0] for x in res]
+
     def update_recipe(self, recipe: data_layer.StructuredRecipe):
         with self._con:
             self._delete_recipe_no_transaction(recipe.name)
