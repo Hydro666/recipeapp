@@ -153,7 +153,14 @@ cython_debug/
 
 # Application specific:
 data/
-
 bazel-*
-
 .vscode
+.ruff_cache
+.bazelrc
+.npmrc
+.ruff.toml
+gazelle_python.yaml
+MODULE.bazel.lock
+pnpm-lock.yaml
+pnpm-workspace.yaml
+requirements_lock.txt
