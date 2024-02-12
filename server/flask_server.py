@@ -23,6 +23,12 @@ def create_flask(test_config=None):
         if recipe is None:
             flask.abort(404)
         return data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
+
+    @flask_app.route("/recipes")
+    def list_recipes():
+        db_connection = client.SQLiteClient(FLAGS.sqlite_db_path)
+        recipes = db_connection.list_recipes()
+        return recipes
     
     return flask_app
 
