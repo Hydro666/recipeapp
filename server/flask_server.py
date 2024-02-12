@@ -3,30 +3,25 @@ from db.sqlite import client
 
 from absl import app
 from absl import flags
-from flask import Flask
+import flask
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("sqlite_db_path", None, "DB path for the underlying sqlite db.")
-
-def _convert_structured_recipe_to_json(recipe: data_layer.StructuredRecipe) -> recipe_service_pb2.Recipe:
-    out = recipe_service_pb2.Recipe(name=recipe.name)
-    for ri in recipe.recipe_ingredients:
-        out.recipe_ingredients.add(
-            name=ri.name,
-            quantity=ri.quantity,
-        )
-    return out
+flags.mark_flag_as_required("sqlite_db_path")
 
 
 def create_flask(test_config=None):
-    flask_app = Flask(__name__)
+    flask_app = flask.Flask(__name__)
 
     db_connection = client.SQLiteClient(FLAGS.sqlite_db_path)
 
     @flask_app.route("/recipe/<name>")
     def get_recipe(name: str):
-        return "<p>Hello, World!</p>"
+        recipe = db_connection.get_recipe(name)
+        if recipe is None:
+            flask.abort(401)
+        return data_layer.DataSerializer().serialize_structured_recipe_to_json(recipe)
     
     return flask_app
 
