@@ -3,8 +3,8 @@ load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 py_binary(
     name = "flask_server",
     srcs = ["flask_server.py"],
-    visibility = ["//:__subpackages__"],
     data = ["//data"],
+    visibility = ["//:__subpackages__"],
     deps = [
         "//db",
         "//db/sqlite",
