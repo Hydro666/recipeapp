@@ -121,6 +121,8 @@ class DataSerializerTest(absltest.TestCase):
                 ]
             ),
         }
+        with self.assertRaises(ValueError):
+            data_layer.DataSerializer().parse_json_to_structured_recipe(json_rep)
 
 
 if __name__ == "__main__":
