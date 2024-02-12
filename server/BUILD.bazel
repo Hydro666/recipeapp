@@ -5,6 +5,8 @@ py_binary(
     srcs = ["flask_server.py"],
     visibility = ["//:__subpackages__"],
     deps = [
+        "//db",
+        "//db/sqlite",
         "@pip//absl_py",
         "@pip//flask",
     ],
@@ -15,6 +17,8 @@ py_library(
     srcs = ["flask_server.py"],
     visibility = ["//:__subpackages__"],
     deps = [
+        "//db",
+        "//db/sqlite",
         "@pip//absl_py",
         "@pip//flask",
     ],
