@@ -30,6 +30,7 @@ ts_project(
         "//react:node_modules/react-router-dom",
         "//react:node_modules/vite-plugin-svgr",
         "//react:node_modules/web-vitals",
+        "//react/src/routes",
     ],
 )
 

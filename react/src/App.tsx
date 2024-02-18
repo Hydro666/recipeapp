@@ -1,10 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 import './App.css';
 import { useState } from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
 
 const baseUrl = "http://localhost:5000"
 
@@ -39,9 +35,6 @@ function RecipeTitle({ title }) {
 }
 
 function IngredientGrid( { ingredients }) {
-  const rows = ingredients.map(ri => {
-    return <IngredientRow name={ri.name} quantity={ri.quantity} />
-  })
   const header = (
     <>
       <tr>
@@ -50,6 +43,7 @@ function IngredientGrid( { ingredients }) {
       </tr> 
     </>
   )
+  const rows = ingredients.map(ri => <IngredientRow name={ri.name} quantity={ri.quantity} />)
   return (
     <>
       <table>
