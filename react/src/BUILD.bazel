@@ -25,6 +25,7 @@ ts_project(
     deps = [
         "//react:node_modules/@types/react",
         "//react:node_modules/react",
+        "//react:node_modules/react-bootstrap",
         "//react:node_modules/react-dom",
         "//react:node_modules/vite-plugin-svgr",
         "//react:node_modules/web-vitals",

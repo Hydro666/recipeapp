@@ -1,5 +1,4 @@
 /// <reference types="vite-plugin-svgr/client" />
-import logo from './logo.svg?react';
 import './App.css';
 import { useState } from 'react';
 
@@ -16,18 +15,58 @@ const fixedData = {
   ]
 }
 
+function RecipeSelector({ choices }) {
+
+}
+
 function Recipebox({ recipeData }) {
-  const ingredients = recipeData.recipe_ingredients.map(ri => 
-    <li key="2">
-      {ri.name} : {ri.quantity}
-    </li>
-  );
   return (
     <>
-      <h1>Recipe for: {recipeData.name}</h1>
-      <ul>
-        {ingredients}
-      </ul>
+      <RecipeTitle title={recipeData.name} />
+      <IngredientGrid ingredients={recipeData.recipe_ingredients} />
+    </>
+  )
+}
+
+function RecipeTitle({ title }) {
+  return (
+    <h1>{title}</h1>
+  )
+}
+
+function IngredientGrid( { ingredients }) {
+  const rows = ingredients.map(ri => {
+    return <IngredientRow name={ri.name} quantity={ri.quantity} />
+  })
+  const header = (
+    <>
+      <tr>
+        <th scope="col">Ingredient name</th>
+        <th scope="col">Ingredient quantity</th>
+      </tr> 
+    </>
+  )
+  return (
+    <>
+      <table>
+        <thead>
+          {header}
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
+    </>
+  )
+}
+
+function IngredientRow({ name, quantity }) {
+  return (
+    <>
+      <tr>
+        <th>{name}</th>
+        <th>{quantity}</th>
+      </tr>
     </>
   )
 }
@@ -42,11 +81,10 @@ function App() {
   }
 
   return (
+
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={oonClick}>Get dat cake</button>
-        <Recipebox recipeData={recipeState}/>
+        <Recipebox recipeData={recipeState} />
       </header>
     </div>
   );
