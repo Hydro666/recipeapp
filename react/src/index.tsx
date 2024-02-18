@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import Recipe from "./routes/recipe";
 import Root from "./routes/root";
 import reportWebVitals from './reportWebVitals';
 import {
@@ -11,7 +12,13 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />
+    element: <Root />,
+    children: [
+      {
+        path: "recipe",
+        element: <Recipe />,
+      }
+    ],
   }
 ])
 
