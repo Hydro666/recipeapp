@@ -7,16 +7,6 @@ import Table from 'react-bootstrap/Table'
 import { useLoaderData } from "react-router-dom";
 import RecipeClient from "../external_apis/recipe_client";
 
-const fixedData = {
-  "name": "Bread",
-  "recipe_ingredients": [
-    {"name": "Flour", "quantity": 100},
-    {"name": "Water", "quantity": 80},
-    {"name": "Salt", "quantity": 2},
-    {"name": "yeast", "quantity": 1},
-  ]
-}
-
 export async function loader({ params }) {
   let c = new RecipeClient("http://localhost:5000");
   const res = await c.getRecipe(params.recipeId);
@@ -84,10 +74,7 @@ function IngredientRow({ name, quantity }) {
 }
 
 export default function Recipe() {
-  const [recipeState, setRecipeState] = useState(fixedData);
-
   const recipe = useLoaderData();
-
   return (
     <>
       <Recipebox recipeData={recipe} />
