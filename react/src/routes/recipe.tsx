@@ -13,10 +13,10 @@ const fixedData = {
 
 function Recipebox({ recipeData }) {
   return (
-    <>
+    <div className="ri-grid">
       <RecipeTitle title={recipeData.name} />
       <IngredientGrid ingredients={recipeData.recipe_ingredients} />
-    </>
+    </div>
   )
 }
 
