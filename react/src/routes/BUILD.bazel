@@ -6,5 +6,8 @@ js_library(
         "recipe.tsx",
         "root.tsx",
     ],
+    deps = [
+        "//react/src/external_apis",
+    ],
     visibility = ["//react:__subpackages__"],
 )

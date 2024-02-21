@@ -11,15 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-.ri-grid {
-  color: #bd7305;
-  border-width: 100px;
-  border-style: ridge;
-}
-
-.ri-grid table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  border: 3px solid #2105bd;
-}

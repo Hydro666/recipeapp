@@ -1,5 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Table from 'react-bootstrap/Table'
+import { useLoaderData } from "react-router-dom";
+import RecipeClient from "../external_apis/recipe_client";
 
 const fixedData = {
   "name": "Bread",
@@ -11,11 +17,27 @@ const fixedData = {
   ]
 }
 
+export async function loader({ params }) {
+  let c = new RecipeClient("http://localhost:5000");
+  const res = await c.getRecipe(params.recipeId);
+  return res;
+}
+
 function Recipebox({ recipeData }) {
   return (
     <div className="ri-grid">
-      <RecipeTitle title={recipeData.name} />
-      <IngredientGrid ingredients={recipeData.recipe_ingredients} />
+      <Container>
+        <Row>
+          <Col>
+            <RecipeTitle title={recipeData.name} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <IngredientGrid ingredients={recipeData.recipe_ingredients} />
+          </Col>
+        </Row>
+      </Container>
     </div>
   )
 }
@@ -38,14 +60,14 @@ function IngredientGrid( { ingredients }) {
   const rows = ingredients.map(ri => <IngredientRow name={ri.name} quantity={ri.quantity} />)
   return (
     <>
-      <table>
+      <Table striped bordered hover size="sm">
         <thead>
           {header}
         </thead>
         <tbody>
           {rows}
         </tbody>
-      </table>
+      </Table>
     </>
   )
 }
@@ -64,9 +86,11 @@ function IngredientRow({ name, quantity }) {
 export default function Recipe() {
   const [recipeState, setRecipeState] = useState(fixedData);
 
+  const recipe = useLoaderData();
+
   return (
     <>
-      <Recipebox recipeData={recipeState} />
+      <Recipebox recipeData={recipe} />
     </>
   );
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Recipe from "./routes/recipe";
-import Root from "./routes/root";
+import Recipe, { loader as recipeLoader } from "./routes/recipe";
+import Root, { loader as rootLoader } from "./routes/root";
 import reportWebVitals from './reportWebVitals';
 import {
   createBrowserRouter,
@@ -13,14 +13,16 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    loader: rootLoader,
     children: [
       {
-        path: "recipe",
+        path: "recipe/:recipeId",
         element: <Recipe />,
+        loader: recipeLoader,
       }
     ],
   }
-])
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
